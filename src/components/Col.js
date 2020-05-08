@@ -6,7 +6,7 @@ function Col(props) {
   const colClassMd = props.mdWidth ? "col-md-" + props.mdWidth : "";
   const colClassLg = props.lgWidth ? "col-lg-" + props.lgWidth : "";
 
-  const classList = [colClassXs, colClassSm, colClassMd, colClassLg].join(" ");
+  const classList = [colClassXs, colClassSm, colClassMd, colClassLg, props.addClassNames || ""].join(" ");
 
   return (<div className={classList}>{props.children}</div>);
 }
