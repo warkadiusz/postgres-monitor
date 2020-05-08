@@ -42,18 +42,6 @@ class MainPanelHeader extends React.Component {
                 <label htmlFor={"endDateInput"}>Until</label>
                 <input className={"form-control"} type={"date"} id={"endDateInput"} min={this.asDate(this.state.startDate)} value={this.asDate(this.state.endDate)} onChange={e => this.handleChange(e, "endDate")}/>
               </div>
-
-              <div className={"form-group form-group-default ml-2"}>
-                <label htmlFor={"refreshRateSelect"}>Refresh rate</label>
-                <select className="form-control " id={"refreshRateSelect"} title={"Refresh rate"} value={this.state.refreshRate} onChange={e => this.handleChange(e, "refreshRate")}>
-                  <option value={1}>1s</option>
-                  <option value={5}>5s</option>
-                  <option value={10}>10s</option>
-                  <option value={30}>30s</option>
-                  <option value={60}>1m</option>
-                  <option value={300}>5m</option>
-                </select>
-              </div>
             </div>
           </div>
         </div>
