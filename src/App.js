@@ -47,7 +47,7 @@ class App extends React.Component {
   }
 
   async switchToRealtime() {
-    throw new Error("NOPE");
+   // throw new Error("NOPE");
   }
 
   tryToConnectWS() {
@@ -72,10 +72,9 @@ class App extends React.Component {
     let dataObj = JSON.parse(event.data);
 
     if (dataObj.status === "datapoint" && parseInt(dataObj.code) === 200 && this.state.refreshRealtime) {
-      let nameValuePair = JSON.parse(dataObj.data);
-      let statName = Object.keys(nameValuePair)[0];
+      let statName = Object.keys(dataObj.data)[0];
 
-      this.charts[statName].addDataPoint(nameValuePair[statName]);
+      this.charts[statName].addDataPoint(dataObj.data[statName]);
     }
   }
 
