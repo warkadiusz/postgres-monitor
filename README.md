@@ -1,4 +1,8 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Postgres monitor - frontend app
+
+This is application created for "Computer Systems Administration" university course.  
+Connects to [Postgres monitor - backend](https://github.com/warkadiusz/postgres-stats-puller)
+and allows fetching data live with WebSockets or display historical data within given time range.
 
 ## Available Scripts
 

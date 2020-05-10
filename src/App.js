@@ -95,8 +95,8 @@ class App extends React.Component {
     return (
       <div className="App">
         <Header appName={this.AppName}/>
-        <Sidebar/>
-        <div className="main-panel">
+
+        <div className="main-panel" style={{width: "100%"}}>
           <div className="content">
             <MainPanelHeader
               fetchDataBetween={this.fetchDataBetween}
