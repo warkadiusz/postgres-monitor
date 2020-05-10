@@ -15,39 +15,53 @@ class App extends React.Component {
 
     this.state = {
       refreshRealtime: true,
-      WSConnectionEstablished: false,
-      WSHost: '',
+      serverConnectionEstablished: false,
+      serverHost: '',
     };
 
-    this.updateWSHost = this.updateWSHost.bind(this)
+    this.updateServerHost = this.updateServerHost.bind(this)
     this.fetchDataBetween = this.fetchDataBetween.bind(this)
     this.switchToRealtime = this.switchToRealtime.bind(this)
     this.onWSMessage = this.onWSMessage.bind(this)
   }
 
-  updateWSHost(newHost) {
+  updateServerHost(newHost) {
     return new Promise((resolve, reject) => {
-        this.setState({WSHost: newHost}, () => {
-          this.tryToConnectWS().then(() => {
-            this.setState({WSConnectionEstablished: true})
-            this.switchToRealtime()
-            resolve(true);
-          }).catch(err => {
-            alert('Cannot connect to server! Error: ' + err);
-            reject(err);
-          })
-        });
-      }
-    )
-      ;
+      this.setState({serverHost: newHost}, () => {
+        this.tryToConnectWS().then(() => {
+          this.setState({serverConnectionEstablished: true})
+          this.switchToRealtime()
+          resolve(true);
+        }).catch(err => {
+          alert('Cannot connect to server! Error: ' + err);
+          reject(err);
+        })
+      });
+    });
   }
 
   async fetchDataBetween(startDate, endDate) {
+    this.setState({refreshRealtime: false}, () => {
+      const host = "http://" + this.state.serverHost;
+      startDate = startDate.toISOString().replace(/\.\d{3}Z$/, '')
+      endDate = endDate.toISOString().replace(/\.\d{3}Z$/, '')
+      for (const dataName in this.charts) {
+        const url = host + "/data/" + dataName + "?after=" + startDate + "&before=" + endDate;
+
+        fetch(url).then(r => r.json()).then(re => {
+          Object.keys(re.data).forEach(date => {
+            this.charts[dataName].addDataPoint(date, re.data[date])
+          })
+        }).catch(err => {
+          alert('An error has occurred during data retrieving. Error: ' + err.message)
+        })
+      }
+    });
 
   }
 
-  async switchToRealtime() {
-   // throw new Error("NOPE");
+  switchToRealtime() {
+    this.setState({refreshRealtime: true});
   }
 
   tryToConnectWS() {
@@ -56,8 +70,7 @@ class App extends React.Component {
         reject("WebSocket not supported by browser.")
       }
 
-
-      this.wsConnection = new WebSocket("ws://" + this.state.WSHost + "/ws");
+      this.wsConnection = new WebSocket("ws://" + this.state.serverHost + "/ws");
       this.wsConnection.onmessage = this.onWSMessage;
       this.wsConnection.onerror = function (err) {
         reject("WebSocket connection cannot be established.");
@@ -74,7 +87,7 @@ class App extends React.Component {
     if (dataObj.status === "datapoint" && parseInt(dataObj.code) === 200 && this.state.refreshRealtime) {
       let statName = Object.keys(dataObj.data)[0];
 
-      this.charts[statName].addDataPoint(dataObj.data[statName]);
+      this.charts[statName].addDataPoint((new Date()).toLocaleTimeString(), dataObj.data[statName]);
     }
   }
 
@@ -88,10 +101,11 @@ class App extends React.Component {
             <MainPanelHeader
               fetchDataBetween={this.fetchDataBetween}
               switchToRealtime={this.switchToRealtime}
-              updateWSHost={this.updateWSHost}
+              updateServerHost={this.updateServerHost}
+              serverConnectionEstablished={this.state.serverConnectionEstablished}
             />
 
-            <div className={this.state.WSConnectionEstablished ? '' : 'd-none'}>
+            <div className={this.state.serverConnectionEstablished ? '' : 'd-none'}>
               <LineChartBox
                 cardTitle={"Database size"}
                 cardSubtitle={"Database size in bytes over time"}
@@ -123,7 +137,7 @@ class App extends React.Component {
                 ref={(reference) => this.charts["TotalNumberOfTransactions"] = reference}
               />
             </div>
-            <div className={this.state.WSConnectionEstablished ? 'd-none' : ''}>
+            <div className={this.state.serverConnectionEstablished ? 'd-none' : ''}>
               <NoConnectionError/>
             </div>
           </div>

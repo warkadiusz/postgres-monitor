@@ -1,7 +1,7 @@
 import React from 'react';
 
 class MainPanelHeader extends React.Component {
-  wsHostInputRef = null;
+  serverHostInputRef = null;
 
   constructor(props) {
     super(props);
@@ -11,17 +11,19 @@ class MainPanelHeader extends React.Component {
       endDate: new Date(),
       loading: false,
       connecting: false,
+      serverConnectionEstablished: false
     }
 
     this.loadPastData = this.loadPastData.bind(this);
+    this.disableInputs = this.disableInputs.bind(this);
     this.switchToRealtime = this.switchToRealtime.bind(this);
-    this.sendUpdateWSHost = this.sendUpdateWSHost.bind(this);
+    this.sendUpdateServerHost = this.sendUpdateServerHost.bind(this);
   }
 
-  sendUpdateWSHost() {
+  sendUpdateServerHost() {
     this.setState({connecting: true})
 
-    this.props.updateWSHost(this.wsHostInputRef.value).then(() => {
+    this.props.updateServerHost(this.serverHostInputRef.value).then(() => {
       this.setState({connecting: false})
     }).catch(() => {
       this.setState({connecting: false})
@@ -45,11 +47,16 @@ class MainPanelHeader extends React.Component {
 
   switchToRealtime() {
     this.setState({loading: true});
-    this.props.switchToRealtime().then(() => this.setLoadingStop());
+    this.props.switchToRealtime();
+    this.setLoadingStop();
   }
 
   setLoadingStop() {
     this.setState({loading: false})
+  }
+
+  disableInputs() {
+    return this.state.loading || this.state.connecting || !this.props.serverConnectionEstablished;
   }
 
   render() {
@@ -67,13 +74,13 @@ class MainPanelHeader extends React.Component {
                   className={"form-control mt-0"}
                   type={"text"}
                   placeholder={"Server host"}
-                  ref={r => this.wsHostInputRef = r}
+                  ref={r => this.serverHostInputRef = r}
                   disabled={this.state.connecting}
                 />
                 <button
                   className={"btn btn-info btn-sm"}
                   disabled={this.state.connecting}
-                  onClick={this.sendUpdateWSHost}
+                  onClick={this.sendUpdateServerHost}
                 >
                   <i className={"fa fa-spin fa-spinner " + (this.state.connecting ? '' : 'd-none')}/>&nbsp;
 
@@ -107,11 +114,11 @@ class MainPanelHeader extends React.Component {
                 />
               </div>
               <div className={"form-group ml-2 pt-0"}>
-                <button className={"btn btn-primary btn-block btn-xs"} onClick={this.loadPastData} disabled={this.state.loading || this.state.connecting}>
+                <button className={"btn btn-primary btn-block btn-xs"} onClick={this.loadPastData} disabled={this.disableInputs()}>
                   <i className={"fa fa-spin fa-spinner " + (this.state.loading ? '' : 'd-none')}/>&nbsp;
                   Load »
                 </button>
-                <button className={"btn btn-primary btn-block btn-xs mt-1"} onClick={this.switchToRealtime} disabled={this.state.loading || this.state.connecting}>
+                <button className={"btn btn-primary btn-block btn-xs mt-1"} onClick={this.switchToRealtime} disabled={this.disableInputs()}>
                   <i className={"fa fa-spin fa-spinner " + (this.state.loading ? '' : 'd-none')}/>&nbsp;
                   Realtime <i className={"fa fa-stopwatch"}/>
                 </button>

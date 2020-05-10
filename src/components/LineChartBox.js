@@ -34,9 +34,9 @@ class LineChartBox extends React.Component {
     this.addDataPoint = this.addDataPoint.bind(this);
   }
 
-  addDataPoint(value) {
+  addDataPoint(time, value) {
     let updatedState = this.state.chartData;
-    updatedState.labels.push((new Date().toLocaleTimeString()));
+    updatedState.labels.push(time);
     updatedState.datasets[0].data.push(value);
     if (updatedState.labels.length > this.maxDatapointsCount) {
       updatedState.labels.shift();
