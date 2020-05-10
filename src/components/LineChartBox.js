@@ -25,7 +25,8 @@ class LineChartBox extends React.Component {
             data: [],
             backgroundColor: this.chartBackgroundColor,
             borderColor: this.chartBorderColor,
-            label: this.datasetTitle
+            label: this.datasetTitle,
+            cubicInterpolationMode: 'monotone'
           }
         ]
       }
