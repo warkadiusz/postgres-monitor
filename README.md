@@ -4,6 +4,10 @@ This is application created for "Computer Systems Administration" university cou
 Connects to [Postgres monitor - backend](https://github.com/warkadiusz/postgres-stats-puller)
 and allows fetching data live with WebSockets or display historical data within given time range.
 
+<p align=center>
+<img src="https://github.com/warkadiusz/postgres-monitor/raw/master/assets/g.gif">
+</p>
+
 ## Available Scripts
 
 In the project directory, you can run:
